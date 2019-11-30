@@ -1,0 +1,154 @@
+\documentclass{article}
+\usepackage{ulem}
+\title{Learning To Program}
+\author{daxi}
+\begin{document}
+	\maketitle
+	\tableofcontents
+	\section{intro}
+	\subsection{Thus, the goals of a programming system should be}
+	\begin{enumerate}
+		\item to support and encourage powerful ways of thinking
+		\item to enable programmers to see and understand the execution of their programs
+	\end{enumerate}
+	\subsection{We change programming. We turn it into something that's understandable by people}
+	\begin{enumerate}
+		\item what is the actual goal of what we're doing? What behaviors are we trying to enable?
+		\item are we trying to create professional programmers? Or are we trying to create people who aren't afraid of the command line?
+		\item once we understand what we're really trying to do, it's then that we can create our curriculum.
+		\item it is worth considering that most of the people we're trying to teach to program aren't good at it, will never be good at it, and don't ever want to be good at it. most people don't want to---and probably can't---be the epic hacker we want to mould them into to.
+		\item so what's the point?
+	\end{enumerate}
+	\section{contents}
+	\subsection{environment}
+	\subsubsection{read the vocabulary}
+	\begin{enumerate}
+		\item would we want a system that allows the user to mouse over a given keyword a get an explanation?
+		\item to mouse over a variable and see everywhere it's defined?
+		\begin{enumerate}
+			\item you can jig this together by abusing your search feature
+			\item you can do that in vi with `*'
+		\end{enumerate}
+		\item do you remember when programmers were in tears about how their students wouldn't be doing `real programming' if they wrote assembly instead of machine code?
+		\begin{enumerate}
+			\item we must overcome our attachment to the machine.
+			\item it's interesting to think about when we've progressed far enough that we no longer have to teach those old concepts.
+			\begin{enumerate}
+				\item when have we reached the point where even teaching loops is pointless?
+			\end{enumerate}
+		\end{enumerate}
+	\end{enumerate}
+	\subsubsection{follow the flow}
+	\begin{enumerate}
+		\item something like a debugger but less annoying
+		\item more visual?
+		\item there's a reason i don't use debuggers
+	\end{enumerate}
+	\subsubsection{see the state}
+	\begin{enumerate}
+		\item debuggers?
+	\end{enumerate}
+	\subsubsection{create by reacting, create by abstracting}
+	\begin{enumerate}
+		\item this is the UNIX, bottom up philosophy to program design
+		\begin{enumerate}
+			\item maligned by the fools in the universities, but brought back by agile development
+		\end{enumerate}
+	\end{enumerate}
+	\subsection{language}
+	\subsubsection{identity and metaphor}
+	\begin{enumerate}
+		\item is this a question of good variable names?
+		\item is this a question of starting with OOP?
+		\item is this a question of project based, actually useful programming techniques?
+		\item having been thinking for the past ten minutes, i think this is the best way, at least for teens.
+		\begin{enumerate}
+			\item i learned to program through the command line: automating my writing projects. While other people never understood how this knowledge could do anything for them, i viewed programming as something invaluable to my everyday existence.
+			\item it's the ability to use the command line that gave me this freedom.
+		\end{enumerate}
+	\end{enumerate}
+	\subsubsection{decomposition}
+	\begin{enumerate}
+		\item how do i actually put a program together?
+		\item it begins to answer the question of where to start
+		\item i guess this is why we need to teach functions early
+	\end{enumerate}
+	\subsubsection{composition}
+	\begin{enumerate}
+		\item recomposition implies that you start at x, break it into [y], and end with x. what if you start with [y]?
+		\begin{enumerate}
+			\item it privileges a top down design philosophy that i don't think is useful here.
+		\end{enumerate}
+		\item how do i actually put a program together?
+		\item it begins to answer the question of where to start
+	\end{enumerate}
+	\subsubsection{readability}
+	\begin{enumerate}
+		\item under no circumstances should we use haskell
+	\end{enumerate}
+	\section{read the vocabulary}
+	\subsection{make meaning transparent}
+	\begin{enumerate}
+		\item yeah i'm also totally against the guess and check method
+	\end{enumerate}
+	\section{follow the flow}
+	\begin{enumerate}
+		\item i guess it's worth noting that this section is proposing a harsh imperative style? I'd imagine that declarative programming would be easier to understand, not having to get into the details of the implementation.
+		\begin{enumerate}
+			\item it'd be interesting to contrast the two; to try to teach R without using a single loop.
+		\end{enumerate}
+	\end{enumerate}
+	\section{show the data}
+	\begin{enumerate}
+		\item i'd want the value of each variable, and the value of the expression
+		\begin{enumerate}
+			\item AAAAAAAAAAAAA THE FUNCTIONS AREN"T PURE
+		\end{enumerate}
+	\end{enumerate}
+	\section{get something on the screen as soon as possible}
+	\begin{enumerate}
+		\item this autocomplete thing is mostly a question of function naming
+		\begin{enumerate}
+			\item all this means is creating an alias layer around an existing library
+			\item ```javascript const betterNamedFunction = worse\_named\_function;
+			\item ```python better\_named\_function = worse\_named\_function;
+		\end{enumerate}
+		\item are we trying to make art?
+		\begin{enumerate}
+			\item i mean the way people talk about it
+			\item all this creativity talk
+			\item i don't know what i'm talking about
+		\end{enumerate}
+		\item before you can learn to `program' (verb), you must learn the `program' (noun). You feel me?
+	\end{enumerate}
+	\section{create by abstraction}
+	\begin{enumerate}
+		\item She \emph{doesn't}. The learner should start by writing concrete code, and then \emph{gradually \sout{change} refactor} it to introduce abstraction.
+		\item The real power of programming comes when you have antifragile systems: ie, when you refactor properly.
+		\begin{enumerate}
+			\item if you want people to feel in control of the systems they write---they can bend it to their will---the systems they create have to be antifragile
+			\item not really. but they have to at least not be fragile.
+			\item and the best way to teach that is that is to start with very small, stable pieces.
+		\end{enumerate}
+	\end{enumerate}
+	\section{language}
+	\subsection{on languages}
+	\begin{enumerate}
+		\item smalltalk is a very good language
+		\item scheme/racket is also a very good language
+		\item learning scheme was a great idea for me but i don't think it's a good idea for people who aren't professional programmers; back to the `why are these people here' question.
+		\item i think that's the most important question we've got to ask.
+		\item parents need to understand their children probably won't become a 10x middle class software engineer haxx0r.
+	\end{enumerate}
+	\section{decomposition}
+	\begin{enumerate}
+		\item i think top down design is very useful from a project development perspective
+		\item bottom up is that looser, you feel it, more agile perspective
+		\item the best is not between, but both simultaneously. this is the perspective of the dao.
+	\end{enumerate}
+	\section{recomposition}
+	\begin{enumerate}
+		\item lol the issue is global state lololololol
+		\item i'm glad we can all agree that global state is shit
+	\end{enumerate}
+\end{document}
