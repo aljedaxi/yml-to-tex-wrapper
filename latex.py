@@ -7,8 +7,9 @@ from ruamel.yaml import YAML
 from yml_to_tex import yml_to_tex as yml
 yaml = YAML(typ='safe')
 
-CONF = {
-    'default_author': 'daxi'
+CONF = { #TODO
+    'default_author': 'daxi',
+    'packages': ('ulem',) 
 }
 DESCRIPTION = 'takes a yaml file in, return a pdf---if you did it right.'
 
@@ -84,79 +85,34 @@ def make_latex(file_content: str, title: str, author: str, packages: Iterable[st
     latex = latex_boilerplate(title, author, body, packages)
     return latex
 
+def main(args, infile_content: str, conf: dict) -> dict:
+    packages = conf['packages']
+    infile = args.infile
+    outfile = get_outfile(args.outfile, infile)
+
+    title = gen_title(infile)
+    author = get_author(conf)
+
+    return {
+        'outfile': outfile,
+        'outfile_content': make_latex(infile_content, title, author, packages),
+        'sh_code': compile_pdf(outfile)
+    }
+
+def impure_main():
+    args = gen_parser()
+    infile_content = open(args.infile).read()
+    IO = main(args, infile_content, CONF)
+    open(IO['outfile'], 'w').write(IO['outfile_content'])
+
+    for code in IO['sh_code']:
+        call(code)
+
 def gen_parser():
     parser = argparse.ArgumentParser(description=DESCRIPTION)
     parser.add_argument('infile', help='the file you want to use.')
     parser.add_argument('-o', '--outfile', help='the file you want to use.')
     return parser.parse_args()
 
-def impure_main():
-    args = gen_parser()
-    conf = CONF #TODO
-    packages = ('ulem',) #TODO
-    infile = args.infile
-    outfile = get_outfile(args.outfile, infile)
-
-    title = gen_title(filename)
-    author = get_author(conf)
-
-    infile_content = open(args.infile).read()
-    outfile_content = make_latex(infile_content, title, author, packages)
-    open(outfile, 'w').write(outfile_content)
-
-    code_to_call = compile_pdf(outfile)
-    for code in code_to_call:
-        call(code)
-
 if __name__ == '__main__':
     impure_main()
-
-def test_compile_pdf():
-    pytest.assume(compile_pdf('learning-to-program.tex'), [
-        ('mkdir', 'junk_drawer'),
-        ('latexmk', '--pdf', '-output-directory=junk_drawer', 'learning-to-program.tex'),
-        ('mv', 'junk_drawer/learning-to-program.pdf', './')
-    ])
-
-    pytest.assume(compile_pdf('learning-to-program.tex', engine='pdflatex'), [
-        ('mkdir', 'junk_drawer'),
-        ('pdflatex', '-output-directory=junk_drawer', 'learning-to-program.tex'),
-        ('mv', 'junk_drawer/learning-to-program.pdf', './')
-    ])
-
-def test_no_directories():
-    pytest.assume(no_directories('test/test.tex'), 'test.tex')
-    pytest.assume(no_directories('test.tex'), 'test.tex')
-
-def test_no_extensions():
-    pytest.assume(no_extensions('test/test.tex'), 'test/test')
-    pytest.assume(no_extensions('test/test'), 'test/test')
-
-def test_get_author():
-    assert get_author({
-        'default_author': 'daxi'
-    }) == 'daxi'
-
-def test_get_outfile():
-    test_in = 'test_infile.yml'
-    test_out = 'test_outfile.yml'
-    pytest.assume(get_outfile(None, test_in), f"{test_in.split('.')[0]}.tex")
-    pytest.assume(get_outfile(test_out, test_in), f"{test_out.split('.')[0]}.tex")
-    pytest.assume(get_outfile(f'test/{test_out}', test_in), f"{test_out.split('.')[0]}.tex")
-
-def test_gen_title():
-    pytest.assume(gen_title('test_file.yml'), 'Test File')
-    pytest.assume(gen_title('test-file.yml'), 'Test File')
-    pytest.assume(gen_title('test/test-file.yml'), 'Test File')
-
-def test_yml_to_tex():
-    in_doc = open('test/learning-to-program.yml').read()
-    out_doc = open('test/learning-to-program.tex').read()
-    pytest.assume(yml_to_tex(in_doc), out_doc)
-
-def test_make_latex():
-    test_file_name = 'test/learning-to-program.yml'
-    infile_content = open(test_file_name).read()
-    outfile_content = open('test/full-learning-to-program.tex').read().rstrip()
-    output = make_latex(infile_content, 'Learning To Program', ('ulem',), 'daxi')
-    pytest.assume(output, outfile_content)
