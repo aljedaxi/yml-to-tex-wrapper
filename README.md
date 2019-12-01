@@ -1,4 +1,4 @@
-# HOW TO USE
+## HOW TO USE
   - clone this repo
     ```bash
     git clone https://github.com/aljedaxi/yml-to-tex-wrapper
@@ -12,7 +12,9 @@
     ```
   - get pdf using the magic of LaTeX
 
-# WHAT SHOULD THE YAML LOOK LIKE
+## WHAT SHOULD THE YAML LOOK LIKE
+  - the title is automagically generated from the filename
+  - the author is declared at the top of latex.py #TODO!
 ```yaml
 section 1:
   - point one
