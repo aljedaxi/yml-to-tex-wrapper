@@ -2,6 +2,7 @@ import argparse
 import collections
 from typing import Iterable
 from subprocess import call
+import re
 import pytest
 from ruamel.yaml import YAML
 from yml_to_tex import yml_to_tex as yml
@@ -9,7 +10,15 @@ yaml = YAML(typ='safe')
 
 CONF = { #TODO
     'default_author': 'daxi',
-    'packages': ('ulem',) 
+    'packages': (
+        'ulem',
+     ),
+     'commands': (
+        '\\renewcommand{\\labelenumii}{\\theenumii}',
+        '\\renewcommand{\\theenumii}{\\theenumi.\\arabic{enumii}.}',
+        '\\renewcommand{\\labelenumiii}{\\theenumiii}',
+        '\\renewcommand{\\theenumiii}{\\theenumii\\arabic{enumiii}.}',
+     ),
 }
 DESCRIPTION = 'takes a yaml file in, return a pdf---if you did it right.'
 
@@ -57,36 +66,98 @@ def gen_title(filename: str) -> str:
 
     return filename.replace('_', ' ').replace('-', ' ').title()
 
-def yml_to_tex(document: str) -> str:
-    return yml.yml_to_tex(document)
+def yml_to_tex(infile: str, meta={}) -> str:
+    def split_into_docs(doc: str) -> tuple:
+        try:
+            documents = re.compile('\n---').split(infile)
+        except:
+            documents = (infile, )
 
-def latex_boilerplate(title: str, author: str, body: str, packages: Iterable[str]) -> str:
+        return documents
+
+    def rip_metadata_from_doc(doc_dicts: dict, meta: dict) -> tuple:
+        for dic in doc_dicts:
+            for key in dic:
+                if key in meta.keys():
+                    meta[key] = dic[key]
+                    del dic[key]
+
+        return (doc_dicts, meta)
+
+    def chapter_together(docs: list, chapter_titles=('', )) -> str:
+        #joiners = ['\\%s{%s}' % tup for tup in zip(
+        joiner = '\\chapter{unnamed}\n'
+        return f'{joiner}{joiner.join(docs)}'
+
+    doc_dicts = [yaml.load(document) for document in split_into_docs(infile)]
+    (doc_dicts, meta) = rip_metadata_from_doc(doc_dicts, meta)
+    if len(doc_dicts) == 1:
+        return {
+            'document': yml.data_to_tex(doc_dicts[0]),
+            'documentclass': 'article',
+            'meta': meta
+        }
+    else:
+        return {
+            'document': chapter_together(
+                [yml.data_to_tex(doc) for doc in doc_dicts]
+            ),
+            'documentclass': 'book',
+            'meta': meta
+        }
+
+def latex_boilerplate(meta: dict, body: str, packages=('',), commands=('',)) -> str:
     def format_packages(packages: Iterable[str]):
         return [f'\\usepackage{{{p}}}' for p in packages]
+
+    author = meta['author']
+    documentclass = meta['documentclass']
+    title = meta['title']
+
+    prelude = f'\\documentclass{{{documentclass}}}' \
+        f'\\title{{{title}}}' \
+        f'\\author{{{author}}}'
+
+    intro   = '\t\\maketitle\n\t\\tableofcontents'
 
     body = ('\n').join(
         [f'\t{line}' for line in body.split('\n')]
     )
-    prelude = '\\documentclass{article}'
-    intro   = '\t\\maketitle\n\t\\tableofcontents'
+
     return ('\n').join((
         prelude,
         *format_packages(packages),
-        f'\\title{{{title}}}',
-        f'\\author{{{author}}}',
-        f'\\begin{{document}}',
+        *commands,
+        '\\begin{document}',
         intro,
         body,
-        f'\\end{{document}}'
+        '\\end{document}'
     ))
 
-def make_latex(file_content: str, title: str, author: str, packages: Iterable[str]) -> str:
-    body  = yml_to_tex(file_content)
-    latex = latex_boilerplate(title, author, body, packages)
+def make_latex(file_content: str, title: str, author: str, packages=('',), commands=('',)) -> str:
+    meta = {
+        'title': title,
+        'author': author,
+    }
+    temp = yml_to_tex(file_content, meta=meta)
+    document = temp['document']
+    meta = temp['meta']
+    meta['documentclass'] = temp['documentclass']
+    latex = latex_boilerplate(meta, document, packages, commands)
     return latex
 
 def main(args, infile_content: str, conf: dict) -> dict:
-    packages = conf['packages']
+    def safe_prop(dic: dict, prop: str, default=None):
+        try:
+            val = dic[prop]
+        except:
+            val = default
+
+        return val
+
+    packages = safe_prop(conf, 'packages', default=('',))
+    commands = safe_prop(conf, 'commands', default=('',))
+
     infile = args.infile
     outfile = get_outfile(args.outfile, infile)
 
@@ -95,7 +166,7 @@ def main(args, infile_content: str, conf: dict) -> dict:
 
     return {
         'outfile': outfile,
-        'outfile_content': make_latex(infile_content, title, author, packages),
+        'outfile_content': make_latex(infile_content, title, author, packages, commands),
         'sh_code': compile_pdf(outfile)
     }
 
