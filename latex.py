@@ -84,10 +84,14 @@ def yml_to_tex(infile: str, meta={}) -> str:
 
         return (doc_dicts, meta)
 
-    def chapter_together(docs: list, chapter_titles=('', )) -> str:
-        #joiners = ['\\%s{%s}' % tup for tup in zip(
+    def chapter_together(chapters: list, chapter_titles=('', )) -> str:
+        #TODO each chapter should have the form
+        #(title, body)
+        #[f'\\chapter{{{title}}}\n{body} for (title, body) in chapters]
         joiner = '\\chapter{unnamed}\n'
-        return f'{joiner}{joiner.join(docs)}'
+        return '\n'.join(
+            [f'{joiner}{chapter}' for chapter in chapters]
+        )
 
     doc_dicts = [yaml.load(document) for document in split_into_docs(infile)]
     (doc_dicts, meta) = rip_metadata_from_doc(doc_dicts, meta)
