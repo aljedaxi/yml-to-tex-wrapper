@@ -18,6 +18,8 @@ CONF = { #TODO
         '\\renewcommand{\\theenumii}{\\theenumi.\\arabic{enumii}.}',
         '\\renewcommand{\\labelenumiii}{\\theenumiii}',
         '\\renewcommand{\\theenumiii}{\\theenumii\\arabic{enumiii}.}',
+        '\\renewcommand{\\labelenumiv}{\\theenumiv}',
+        '\\renewcommand{\\theenumiv}{\\theenumiii\arabic{enumiv}.}',
      ),
 }
 DESCRIPTION = 'takes a yaml file in, return a pdf---if you did it right.'
@@ -170,7 +172,13 @@ def main(args, infile_content: str, conf: dict) -> dict:
 
     return {
         'outfile': outfile,
-        'outfile_content': make_latex(infile_content, title, author, packages, commands),
+        'outfile_content': make_latex(
+            infile_content.replace('_', '\\_'), 
+            title, 
+            author, 
+            packages, 
+            commands
+        ),
         'sh_code': compile_pdf(outfile)
     }
 
